@@ -175,14 +175,14 @@
 
         <div class="input-group">
             <label for="startDate">Start Date</label>
-            <input type="text" id="startDate" placeholder="YYYY-MM-DD" required autofocus>
-            <span class="help-text">Format: YYYY-MM-DD (e.g., 2025-12-07)</span>
+            <input type="text" id="startDate" placeholder="dd-mmm-yyyy" required autofocus>
+            <span class="help-text">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
         </div>
 
         <div class="input-group">
             <label for="endDate">End Date</label>
-            <input type="text" id="endDate" placeholder="YYYY-MM-DD" required>
-            <span class="help-text">Format: YYYY-MM-DD (e.g., 2025-12-31)</span>
+            <input type="text" id="endDate" placeholder="dd-mmm-yyyy" required>
+            <span class="help-text">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
         </div>
 
         <button class="button" onclick="calculateDifference()">Calculate Difference</button>
@@ -209,6 +209,24 @@
         function parseDate(dateStr) {
             // Remove extra spaces
             dateStr = dateStr.trim();
+
+            // Month abbreviations
+            const months = {
+                'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
+                'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
+            };
+
+            // Try parsing dd-mmm-yyyy format (e.g., 07-Dec-2025)
+            const ddMmmYyyyMatch = dateStr.match(/^(\d{1,2})-([a-zA-Z]{3})-(\d{4})$/);
+            if (ddMmmYyyyMatch) {
+                const day = parseInt(ddMmmYyyyMatch[1]);
+                const monthStr = ddMmmYyyyMatch[2].toLowerCase();
+                const year = parseInt(ddMmmYyyyMatch[3]);
+
+                if (months.hasOwnProperty(monthStr)) {
+                    return new Date(year, months[monthStr], day);
+                }
+            }
 
             // Try parsing YYYY-MM-DD format
             const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
@@ -254,14 +272,14 @@
 
             // Validate date parsing
             if (!startDate || isNaN(startDate.getTime())) {
-                errorDiv.textContent = 'Invalid start date. Use format YYYY-MM-DD';
+                errorDiv.textContent = 'Invalid start date. Use format dd-mmm-yyyy (e.g., 07-Dec-2025)';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
             }
 
             if (!endDate || isNaN(endDate.getTime())) {
-                errorDiv.textContent = 'Invalid end date. Use format YYYY-MM-DD';
+                errorDiv.textContent = 'Invalid end date. Use format dd-mmm-yyyy (e.g., 31-Dec-2025)';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
@@ -307,10 +325,12 @@
         // Set today's date as default for start date
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const day = String(today.getDate()).padStart(2, '0');
-            document.getElementById('startDate').value = `${year}-${month}-${day}`;
+            const month = monthNames[today.getMonth()];
+            const year = today.getFullYear();
+            document.getElementById('startDate').value = `${day}-${month}-${year}`;
         });
 
         // Allow Enter key to trigger calculation
