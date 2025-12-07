@@ -49,7 +49,15 @@
             font-size: 14px;
         }
 
-        input[type="date"] {
+        .help-text {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            margin-top: 5px;
+            font-weight: 400;
+        }
+
+        input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #e0e0e0;
@@ -58,7 +66,7 @@
             transition: border-color 0.3s;
         }
 
-        input[type="date"]:focus {
+        input[type="text"]:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -167,12 +175,14 @@
 
         <div class="input-group">
             <label for="startDate">Start Date</label>
-            <input type="date" id="startDate" required>
+            <input type="text" id="startDate" placeholder="YYYY-MM-DD" required autofocus>
+            <span class="help-text">Format: YYYY-MM-DD (e.g., 2025-12-07)</span>
         </div>
 
         <div class="input-group">
             <label for="endDate">End Date</label>
-            <input type="date" id="endDate" required>
+            <input type="text" id="endDate" placeholder="YYYY-MM-DD" required>
+            <span class="help-text">Format: YYYY-MM-DD (e.g., 2025-12-31)</span>
         </div>
 
         <button class="button" onclick="calculateDifference()">Calculate Difference</button>
@@ -196,6 +206,31 @@
     </div>
 
     <script>
+        function parseDate(dateStr) {
+            // Remove extra spaces
+            dateStr = dateStr.trim();
+
+            // Try parsing YYYY-MM-DD format
+            const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+            if (isoMatch) {
+                return new Date(isoMatch[1], parseInt(isoMatch[2]) - 1, isoMatch[3]);
+            }
+
+            // Try parsing MM/DD/YYYY or M/D/YYYY format
+            const usMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (usMatch) {
+                return new Date(usMatch[3], parseInt(usMatch[1]) - 1, usMatch[2]);
+            }
+
+            // Try parsing DD/MM/YYYY or D/M/YYYY format
+            const ukMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+            if (ukMatch && parseInt(ukMatch[1]) > 12) {
+                return new Date(ukMatch[3], parseInt(ukMatch[2]) - 1, ukMatch[1]);
+            }
+
+            return null;
+        }
+
         function calculateDifference() {
             const startDateInput = document.getElementById('startDate').value;
             const endDateInput = document.getElementById('endDate').value;
@@ -208,14 +243,29 @@
 
             // Validate inputs
             if (!startDateInput || !endDateInput) {
-                errorDiv.textContent = 'Please select both dates';
+                errorDiv.textContent = 'Please enter both dates';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
             }
 
-            const startDate = new Date(startDateInput);
-            const endDate = new Date(endDateInput);
+            const startDate = parseDate(startDateInput);
+            const endDate = parseDate(endDateInput);
+
+            // Validate date parsing
+            if (!startDate || isNaN(startDate.getTime())) {
+                errorDiv.textContent = 'Invalid start date. Use format YYYY-MM-DD';
+                errorDiv.classList.add('show');
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            if (!endDate || isNaN(endDate.getTime())) {
+                errorDiv.textContent = 'Invalid end date. Use format YYYY-MM-DD';
+                errorDiv.classList.add('show');
+                resultsDiv.classList.remove('show');
+                return;
+            }
 
             // Validate date order
             if (endDate < startDate) {
@@ -256,8 +306,11 @@
 
         // Set today's date as default for start date
         document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('startDate').value = today;
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            document.getElementById('startDate').value = `${year}-${month}-${day}`;
         });
 
         // Allow Enter key to trigger calculation
