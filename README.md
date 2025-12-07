@@ -46,3 +46,27 @@ The result will show:
 - Total Days: 7
 - Weekdays: 5 (Wed, Thu, Fri, Mon, Tue)
 - Weekend: 2 (Sat, Sun)
+
+## Deployment
+
+### GitHub Pages Setup
+
+This project is ready for GitHub Pages deployment. To enable it:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Pages**
+3. Under "Source", select the branch you want to deploy (e.g., `main` or your current branch)
+4. Select `/ (root)` as the folder
+5. Click **Save**
+6. Wait a few minutes for the deployment to complete
+7. Your site will be available at: `https://yourusername.github.io/datediff`
+
+The `.nojekyll` file ensures GitHub Pages serves your files directly without Jekyll processing.
+
+### Alternative Deployment Options
+
+This static site can also be deployed to:
+- **Vercel**: Connect your GitHub repo for automatic deployments
+- **Netlify**: Drag and drop `index.html` or connect via Git
+- **Cloudflare Pages**: Fast global CDN with unlimited bandwidth
+- Any static hosting service
