@@ -129,11 +129,10 @@
         }
 
         .results-card {
-            display: none;
+            display: block;
         }
 
         .results-card.show {
-            display: block;
             animation: fadeIn 0.5s;
         }
 
@@ -291,7 +290,7 @@
             <div class="toggle-container">
                 <span class="toggle-label">Use Calendar</span>
                 <label class="toggle-switch">
-                    <input type="checkbox" id="calendarToggle" onchange="toggleCalendar()">
+                    <input type="checkbox" id="calendarToggle" onchange="toggleCalendar()" checked>
                     <span class="slider"></span>
                 </label>
             </div>
@@ -647,6 +646,9 @@
             const month = monthNames[today.getMonth()];
             const year = today.getFullYear();
             document.getElementById('startDate').value = `${day}-${month}-${year}`;
+
+            // Initialize calendar mode since toggle is checked by default
+            toggleCalendar();
         });
 
         // Allow Enter key to trigger calculation
