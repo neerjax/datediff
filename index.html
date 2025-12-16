@@ -96,7 +96,7 @@
 
         /* Left Card - Input */
         .input-card {
-            max-width: 550px;
+            max-width: 480px;
         }
 
         .calendar-toggle {
@@ -107,6 +107,7 @@
             flex-direction: column;
             align-items: flex-end;
             gap: 8px;
+            z-index: 10;
         }
 
         .calendar-label {
@@ -318,6 +319,13 @@
 
         .holiday-date {
             font-weight: 500;
+        }
+
+        .holiday-legend {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 12px;
+            font-style: italic;
         }
 
         /* Responsive */
@@ -536,6 +544,7 @@
         const holidays = {
             india: [
                 // 2025 holidays
+                { date: '2025-01-01', name: 'New Year\'s Day' },
                 { date: '2025-01-26', name: 'Republic Day' },
                 { date: '2025-03-14', name: 'Holi' },
                 { date: '2025-03-30', name: 'Ram Navami' },
@@ -551,6 +560,7 @@
                 { date: '2025-11-05', name: 'Guru Nanak Jayanti' },
                 { date: '2025-12-25', name: 'Christmas' },
                 // 2026 holidays
+                { date: '2026-01-01', name: 'New Year\'s Day' },
                 { date: '2026-01-26', name: 'Republic Day' },
                 { date: '2026-03-03', name: 'Holi' },
                 { date: '2026-03-19', name: 'Ram Navami' },
@@ -704,6 +714,13 @@
             const holidaysBox = document.getElementById('holidaysBox');
             let html = '';
             let countryCount = 0;
+            let hasWeekdayHoliday = false;
+
+            // Helper function to check if date is a weekday
+            function isWeekday(date) {
+                const day = date.getDay();
+                return day >= 1 && day <= 5; // Monday (1) to Friday (5)
+            }
 
             // India holidays
             const indiaHolidays = holidays.india.filter(h => {
@@ -716,7 +733,10 @@
                 html += '<div class="country-section"><div class="country-flag">🇮🇳</div>';
                 indiaHolidays.forEach(h => {
                     const hDate = new Date(h.date);
-                    html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}</span> / ${h.name}</div>`;
+                    const weekday = isWeekday(hDate);
+                    if (weekday) hasWeekdayHoliday = true;
+                    const asterisk = weekday ? '*' : '';
+                    html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}${asterisk}</span> / ${h.name}</div>`;
                 });
                 html += '</div>';
             }
@@ -732,9 +752,17 @@
                 html += '<div class="country-section"><div class="country-flag">🇺🇸</div>';
                 usaHolidays.forEach(h => {
                     const hDate = new Date(h.date);
-                    html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}</span> / ${h.name}</div>`;
+                    const weekday = isWeekday(hDate);
+                    if (weekday) hasWeekdayHoliday = true;
+                    const asterisk = weekday ? '*' : '';
+                    html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}${asterisk}</span> / ${h.name}</div>`;
                 });
                 html += '</div>';
+            }
+
+            // Add legend if there are weekday holidays
+            if (hasWeekdayHoliday && html !== '') {
+                html += '<div class="holiday-legend">* Falls on a weekday</div>';
             }
 
             if (html === '') {
