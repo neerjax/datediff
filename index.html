@@ -462,7 +462,7 @@
 <body>
     <!-- Header -->
     <div class="header">
-        <span class="header-brand">NEERJAX</span><span class="header-separator">/</span><span class="header-app">DATE DIFF</span>
+        <span class="header-brand">NEERJAX</span><span class="header-separator">/</span><span class="header-app">DATE-DIFF</span>
     </div>
 
     <!-- Main Container -->
@@ -470,7 +470,7 @@
         <!-- Title -->
         <div class="title-section">
             <h1 class="main-title">
-                <span class="title-date">Date</span><span class="title-diff">Diff</span>
+                <span class="title-date">Date</span><span class="title-diff">-Diff</span>
             </h1>
             <p class="tagline">Your friendly date for all your date-diff needs</p>
         </div>
@@ -632,6 +632,15 @@
                 document.querySelectorAll('.calendar-icon').forEach(icon => {
                     icon.style.display = 'none';
                 });
+
+                // Convert existing text values to date inputs
+                const startParsed = parseDate(startDate.value) || new Date();
+                startDate.value = formatDateForInput(startParsed);
+
+                if (endDate.value) {
+                    const endParsed = parseDate(endDate.value);
+                    if (endParsed) endDate.value = formatDateForInput(endParsed);
+                }
             } else {
                 // Switch to text input
                 startDate.type = 'text';
@@ -642,6 +651,16 @@
                     // Hide icons when calendar toggle is off
                     icon.style.display = 'none';
                 });
+
+                // Convert existing date input values to text format
+                if (startDate.value) {
+                    const d = new Date(startDate.value);
+                    if (!isNaN(d.getTime())) startDate.value = formatDateText(d);
+                }
+                if (endDate.value) {
+                    const d = new Date(endDate.value);
+                    if (!isNaN(d.getTime())) endDate.value = formatDateText(d);
+                }
             }
         });
 
@@ -659,6 +678,25 @@
                 return new Date(year, month, day);
             }
             return null;
+        }
+
+        function pad2(n) {
+            return n.toString().padStart(2, '0');
+        }
+
+        function formatDateForInput(date) {
+            const y = date.getFullYear();
+            const m = pad2(date.getMonth() + 1);
+            const d = pad2(date.getDate());
+            return `${y}-${m}-${d}`;
+        }
+
+        function formatDateText(date) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const day = pad2(date.getDate());
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
         }
 
         function formatDateDisplay(date) {
@@ -801,6 +839,10 @@
             // Set input type to date
             document.getElementById('startDate').type = 'date';
             document.getElementById('endDate').type = 'date';
+
+            // Prefill start date with today
+            const today = new Date();
+            document.getElementById('startDate').value = formatDateForInput(today);
 
             // Set initial display to zeros and empty holidays
             document.getElementById('totalDays').textContent = '0';
