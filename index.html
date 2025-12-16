@@ -200,6 +200,115 @@
         .error.show {
             display: block;
         }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: #555;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result-row.sprints {
+            background: #fff3e0;
+            color: #e65100;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .sprint-list {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .sprint-item {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sprint-number {
+            font-weight: 600;
+            color: #e65100;
+        }
+
+        .sprint-dates {
+            color: #666;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -207,16 +316,24 @@
         <div class="card input-card">
             <h1>Date Difference Calculator</h1>
 
+            <div class="toggle-container">
+                <span class="toggle-label">Use Calendar</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="calendarToggle" onchange="toggleCalendar()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
             <div class="input-group">
                 <label for="startDate">Start Date</label>
                 <input type="text" id="startDate" placeholder="dd-mmm-yyyy" required autofocus>
-                <span class="help-text">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
+                <span class="help-text" id="startHelp">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
             </div>
 
             <div class="input-group">
                 <label for="endDate">End Date</label>
                 <input type="text" id="endDate" placeholder="dd-mmm-yyyy" required>
-                <span class="help-text">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
+                <span class="help-text" id="endHelp">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
             </div>
 
             <button class="button" onclick="calculateDifference()">Calculate Difference</button>
@@ -238,10 +355,100 @@
                 <span class="result-label">Weekend (Sat-Sun)</span>
                 <span class="result-value" id="weekend">0</span>
             </div>
+            <div class="result-row sprints">
+                <span class="result-label">Possible Sprints (2 weeks)</span>
+                <div class="sprint-list" id="sprintList"></div>
+            </div>
         </div>
     </div>
 
     <script>
+        function toggleCalendar() {
+            const toggle = document.getElementById('calendarToggle');
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            const startHelp = document.getElementById('startHelp');
+            const endHelp = document.getElementById('endHelp');
+
+            if (toggle.checked) {
+                // Switch to calendar mode
+                const startValue = startDateInput.value;
+                const endValue = endDateInput.value;
+
+                // Convert existing text values to date format if possible
+                let startDateValue = '';
+                let endDateValue = '';
+
+                if (startValue) {
+                    const startDate = parseDate(startValue);
+                    if (startDate && !isNaN(startDate.getTime())) {
+                        startDateValue = formatDateForInput(startDate);
+                    }
+                }
+
+                if (endValue) {
+                    const endDate = parseDate(endValue);
+                    if (endDate && !isNaN(endDate.getTime())) {
+                        endDateValue = formatDateForInput(endDate);
+                    }
+                }
+
+                startDateInput.type = 'date';
+                endDateInput.type = 'date';
+                startDateInput.value = startDateValue;
+                endDateInput.value = endDateValue;
+                startHelp.textContent = 'Select a date from the calendar';
+                endHelp.textContent = 'Select a date from the calendar';
+            } else {
+                // Switch to text mode
+                const startValue = startDateInput.value;
+                const endValue = endDateInput.value;
+
+                // Convert date values to text format if possible
+                let startTextValue = '';
+                let endTextValue = '';
+
+                if (startValue) {
+                    const startDate = new Date(startValue);
+                    if (!isNaN(startDate.getTime())) {
+                        startTextValue = formatDateToText(startDate);
+                    }
+                }
+
+                if (endValue) {
+                    const endDate = new Date(endValue);
+                    if (!isNaN(endDate.getTime())) {
+                        endTextValue = formatDateToText(endDate);
+                    }
+                }
+
+                startDateInput.type = 'text';
+                endDateInput.type = 'text';
+                startDateInput.placeholder = 'dd-mmm-yyyy';
+                endDateInput.placeholder = 'dd-mmm-yyyy';
+                startDateInput.value = startTextValue;
+                endDateInput.value = endTextValue;
+                startHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 07-Dec-2025)';
+                endHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 31-Dec-2025)';
+            }
+        }
+
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateToText(date) {
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
         function parseDate(dateStr) {
             // Remove extra spaces
             dateStr = dateStr.trim();
@@ -286,36 +493,46 @@
         }
 
         function calculateDifference() {
-            const startDateInput = document.getElementById('startDate').value;
-            const endDateInput = document.getElementById('endDate').value;
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
             const errorDiv = document.getElementById('error');
             const resultsDiv = document.getElementById('results');
+            const isCalendarMode = document.getElementById('calendarToggle').checked;
 
             // Reset error
             errorDiv.classList.remove('show');
             errorDiv.textContent = '';
 
             // Validate inputs
-            if (!startDateInput || !endDateInput) {
+            if (!startDateInput.value || !endDateInput.value) {
                 errorDiv.textContent = 'Please enter both dates';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
             }
 
-            const startDate = parseDate(startDateInput);
-            const endDate = parseDate(endDateInput);
+            let startDate, endDate;
+
+            if (isCalendarMode) {
+                // Calendar mode - parse YYYY-MM-DD format
+                startDate = new Date(startDateInput.value);
+                endDate = new Date(endDateInput.value);
+            } else {
+                // Text mode - parse custom format
+                startDate = parseDate(startDateInput.value);
+                endDate = parseDate(endDateInput.value);
+            }
 
             // Validate date parsing
             if (!startDate || isNaN(startDate.getTime())) {
-                errorDiv.textContent = 'Invalid start date. Use format dd-mmm-yyyy (e.g., 07-Dec-2025)';
+                errorDiv.textContent = isCalendarMode ? 'Invalid start date' : 'Invalid start date. Use format dd-mmm-yyyy (e.g., 07-Dec-2025)';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
             }
 
             if (!endDate || isNaN(endDate.getTime())) {
-                errorDiv.textContent = 'Invalid end date. Use format dd-mmm-yyyy (e.g., 31-Dec-2025)';
+                errorDiv.textContent = isCalendarMode ? 'Invalid end date' : 'Invalid end date. Use format dd-mmm-yyyy (e.g., 31-Dec-2025)';
                 errorDiv.classList.add('show');
                 resultsDiv.classList.remove('show');
                 return;
@@ -351,11 +568,67 @@
                 currentDate.setDate(currentDate.getDate() + 1);
             }
 
+            // Calculate sprints (2 weeks = 14 days)
+            const sprints = calculateSprints(new Date(startDate), new Date(endDate));
+
             // Display results
             document.getElementById('totalDays').textContent = totalDays;
             document.getElementById('weekdays').textContent = weekdays;
             document.getElementById('weekend').textContent = weekend;
+            displaySprints(sprints);
             resultsDiv.classList.add('show');
+        }
+
+        function calculateSprints(startDate, endDate) {
+            const sprints = [];
+            const sprintDuration = 14; // 2 weeks in days
+            let sprintNumber = 1;
+            let currentStart = new Date(startDate);
+
+            while (currentStart <= endDate) {
+                let currentEnd = new Date(currentStart);
+                currentEnd.setDate(currentEnd.getDate() + sprintDuration - 1);
+
+                // If sprint end is beyond the end date, cap it
+                if (currentEnd > endDate) {
+                    currentEnd = new Date(endDate);
+                }
+
+                sprints.push({
+                    number: sprintNumber,
+                    startDate: new Date(currentStart),
+                    endDate: new Date(currentEnd),
+                    days: Math.floor((currentEnd - currentStart) / (1000 * 60 * 60 * 24)) + 1
+                });
+
+                // Move to next sprint
+                currentStart.setDate(currentStart.getDate() + sprintDuration);
+                sprintNumber++;
+            }
+
+            return sprints;
+        }
+
+        function displaySprints(sprints) {
+            const sprintList = document.getElementById('sprintList');
+            sprintList.innerHTML = '';
+
+            sprints.forEach(sprint => {
+                const sprintItem = document.createElement('div');
+                sprintItem.className = 'sprint-item';
+
+                const sprintNumber = document.createElement('span');
+                sprintNumber.className = 'sprint-number';
+                sprintNumber.textContent = `Sprint ${sprint.number}`;
+
+                const sprintDates = document.createElement('span');
+                sprintDates.className = 'sprint-dates';
+                sprintDates.textContent = `${formatDateToText(sprint.startDate)} to ${formatDateToText(sprint.endDate)} (${sprint.days} days)`;
+
+                sprintItem.appendChild(sprintNumber);
+                sprintItem.appendChild(sprintDates);
+                sprintList.appendChild(sprintItem);
+            });
         }
 
         // Set today's date as default for start date
