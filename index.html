@@ -204,7 +204,7 @@
         .toggle-container {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             margin-bottom: 25px;
             padding: 15px;
             background: #f8f9fa;
@@ -280,34 +280,6 @@
         .result-row.sprints {
             background: #fff3e0;
             color: #e65100;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .sprint-list {
-            margin-top: 10px;
-            width: 100%;
-        }
-
-        .sprint-item {
-            padding: 8px 12px;
-            margin: 5px 0;
-            background: white;
-            border-radius: 6px;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sprint-number {
-            font-weight: 600;
-            color: #e65100;
-        }
-
-        .sprint-dates {
-            color: #666;
-            font-size: 13px;
         }
     </style>
 </head>
@@ -356,8 +328,8 @@
                 <span class="result-value" id="weekend">0</span>
             </div>
             <div class="result-row sprints">
-                <span class="result-label">Possible Sprints (2 weeks)</span>
-                <div class="sprint-list" id="sprintList"></div>
+                <span class="result-label">Possible 2-Week Sprints</span>
+                <span class="result-value" id="sprintCount">0</span>
             </div>
         </div>
     </div>
@@ -375,28 +347,39 @@
                 const startValue = startDateInput.value;
                 const endValue = endDateInput.value;
 
-                // Convert existing text values to date format if possible
+                // Store current values before changing type
                 let startDateValue = '';
                 let endDateValue = '';
 
-                if (startValue) {
+                // Only try to parse if we have values and we're in text mode
+                if (startValue && startDateInput.type === 'text') {
                     const startDate = parseDate(startValue);
                     if (startDate && !isNaN(startDate.getTime())) {
                         startDateValue = formatDateForInput(startDate);
                     }
+                } else if (startValue && startDateInput.type === 'date') {
+                    // Already in date format
+                    startDateValue = startValue;
                 }
 
-                if (endValue) {
+                if (endValue && endDateInput.type === 'text') {
                     const endDate = parseDate(endValue);
                     if (endDate && !isNaN(endDate.getTime())) {
                         endDateValue = formatDateForInput(endDate);
                     }
+                } else if (endValue && endDateInput.type === 'date') {
+                    // Already in date format
+                    endDateValue = endValue;
                 }
 
+                // Change type and set values
                 startDateInput.type = 'date';
                 endDateInput.type = 'date';
-                startDateInput.value = startDateValue;
-                endDateInput.value = endDateValue;
+                // Small delay to ensure type change is processed
+                setTimeout(() => {
+                    startDateInput.value = startDateValue;
+                    endDateInput.value = endDateValue;
+                }, 0);
                 startHelp.textContent = 'Select a date from the calendar';
                 endHelp.textContent = 'Select a date from the calendar';
             } else {
@@ -404,30 +387,41 @@
                 const startValue = startDateInput.value;
                 const endValue = endDateInput.value;
 
-                // Convert date values to text format if possible
+                // Store current values before changing type
                 let startTextValue = '';
                 let endTextValue = '';
 
-                if (startValue) {
-                    const startDate = new Date(startValue);
+                // Only try to parse if we have values and we're in date mode
+                if (startValue && startDateInput.type === 'date') {
+                    const startDate = new Date(startValue + 'T00:00:00');
                     if (!isNaN(startDate.getTime())) {
                         startTextValue = formatDateToText(startDate);
                     }
+                } else if (startValue && startDateInput.type === 'text') {
+                    // Already in text format
+                    startTextValue = startValue;
                 }
 
-                if (endValue) {
-                    const endDate = new Date(endValue);
+                if (endValue && endDateInput.type === 'date') {
+                    const endDate = new Date(endValue + 'T00:00:00');
                     if (!isNaN(endDate.getTime())) {
                         endTextValue = formatDateToText(endDate);
                     }
+                } else if (endValue && endDateInput.type === 'text') {
+                    // Already in text format
+                    endTextValue = endValue;
                 }
 
+                // Change type and set values
                 startDateInput.type = 'text';
                 endDateInput.type = 'text';
                 startDateInput.placeholder = 'dd-mmm-yyyy';
                 endDateInput.placeholder = 'dd-mmm-yyyy';
-                startDateInput.value = startTextValue;
-                endDateInput.value = endTextValue;
+                // Small delay to ensure type change is processed
+                setTimeout(() => {
+                    startDateInput.value = startTextValue;
+                    endDateInput.value = endTextValue;
+                }, 0);
                 startHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 07-Dec-2025)';
                 endHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 31-Dec-2025)';
             }
@@ -449,6 +443,26 @@
             return `${day}-${month}-${year}`;
         }
 
+        function isValidDate(day, month, year) {
+            // Check year range (1900-2100)
+            if (year < 1900 || year > 2100) {
+                return false;
+            }
+
+            // Check month range (0-11)
+            if (month < 0 || month > 11) {
+                return false;
+            }
+
+            // Check day range based on month
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            if (day < 1 || day > daysInMonth) {
+                return false;
+            }
+
+            return true;
+        }
+
         function parseDate(dateStr) {
             // Remove extra spaces
             dateStr = dateStr.trim();
@@ -467,26 +481,60 @@
                 const year = parseInt(ddMmmYyyyMatch[3]);
 
                 if (months.hasOwnProperty(monthStr)) {
-                    return new Date(year, months[monthStr], day);
+                    const month = months[monthStr];
+                    if (isValidDate(day, month, year)) {
+                        const date = new Date(year, month, day);
+                        // Double-check that the date wasn't adjusted by JavaScript
+                        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
+                            return date;
+                        }
+                    }
                 }
             }
 
             // Try parsing YYYY-MM-DD format
             const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
             if (isoMatch) {
-                return new Date(isoMatch[1], parseInt(isoMatch[2]) - 1, isoMatch[3]);
+                const year = parseInt(isoMatch[1]);
+                const month = parseInt(isoMatch[2]) - 1;
+                const day = parseInt(isoMatch[3]);
+
+                if (isValidDate(day, month, year)) {
+                    const date = new Date(year, month, day);
+                    if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
+                        return date;
+                    }
+                }
             }
 
             // Try parsing MM/DD/YYYY or M/D/YYYY format
             const usMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
             if (usMatch) {
-                return new Date(usMatch[3], parseInt(usMatch[1]) - 1, usMatch[2]);
+                const month = parseInt(usMatch[1]) - 1;
+                const day = parseInt(usMatch[2]);
+                const year = parseInt(usMatch[3]);
+
+                if (isValidDate(day, month, year)) {
+                    const date = new Date(year, month, day);
+                    if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
+                        return date;
+                    }
+                }
             }
 
             // Try parsing DD/MM/YYYY or D/M/YYYY format
             const ukMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
             if (ukMatch && parseInt(ukMatch[1]) > 12) {
-                return new Date(ukMatch[3], parseInt(ukMatch[2]) - 1, ukMatch[1]);
+                const day = parseInt(ukMatch[1]);
+                const month = parseInt(ukMatch[2]) - 1;
+                const year = parseInt(ukMatch[3]);
+
+                if (isValidDate(day, month, year)) {
+                    const date = new Date(year, month, day);
+                    if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
+                        return date;
+                    }
+                }
             }
 
             return null;
@@ -569,66 +617,25 @@
             }
 
             // Calculate sprints (2 weeks = 14 days)
-            const sprints = calculateSprints(new Date(startDate), new Date(endDate));
+            const sprintCount = calculateSprintCount(totalDays);
 
             // Display results
             document.getElementById('totalDays').textContent = totalDays;
             document.getElementById('weekdays').textContent = weekdays;
             document.getElementById('weekend').textContent = weekend;
-            displaySprints(sprints);
+            document.getElementById('sprintCount').textContent = sprintCount;
             resultsDiv.classList.add('show');
         }
 
-        function calculateSprints(startDate, endDate) {
-            const sprints = [];
+        function calculateSprintCount(totalDays) {
             const sprintDuration = 14; // 2 weeks in days
-            let sprintNumber = 1;
-            let currentStart = new Date(startDate);
+            const count = totalDays / sprintDuration;
 
-            while (currentStart <= endDate) {
-                let currentEnd = new Date(currentStart);
-                currentEnd.setDate(currentEnd.getDate() + sprintDuration - 1);
-
-                // If sprint end is beyond the end date, cap it
-                if (currentEnd > endDate) {
-                    currentEnd = new Date(endDate);
-                }
-
-                sprints.push({
-                    number: sprintNumber,
-                    startDate: new Date(currentStart),
-                    endDate: new Date(currentEnd),
-                    days: Math.floor((currentEnd - currentStart) / (1000 * 60 * 60 * 24)) + 1
-                });
-
-                // Move to next sprint
-                currentStart.setDate(currentStart.getDate() + sprintDuration);
-                sprintNumber++;
+            // Return with one decimal place if it's not a whole number
+            if (count % 1 !== 0) {
+                return count.toFixed(1);
             }
-
-            return sprints;
-        }
-
-        function displaySprints(sprints) {
-            const sprintList = document.getElementById('sprintList');
-            sprintList.innerHTML = '';
-
-            sprints.forEach(sprint => {
-                const sprintItem = document.createElement('div');
-                sprintItem.className = 'sprint-item';
-
-                const sprintNumber = document.createElement('span');
-                sprintNumber.className = 'sprint-number';
-                sprintNumber.textContent = `Sprint ${sprint.number}`;
-
-                const sprintDates = document.createElement('span');
-                sprintDates.className = 'sprint-dates';
-                sprintDates.textContent = `${formatDateToText(sprint.startDate)} to ${formatDateToText(sprint.endDate)} (${sprint.days} days)`;
-
-                sprintItem.appendChild(sprintNumber);
-                sprintItem.appendChild(sprintDates);
-                sprintList.appendChild(sprintItem);
-            });
+            return count;
         }
 
         // Set today's date as default for start date
