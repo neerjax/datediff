@@ -83,6 +83,7 @@
             gap: 40px;
             max-width: 1200px;
             margin: 0 auto;
+            align-items: flex-start;
         }
 
         .card {
@@ -90,13 +91,13 @@
             border: 2px solid #d1fae5;
             border-radius: 20px;
             padding: 35px 40px;
-            flex: 1;
+            flex: 1 1 0;
             position: relative;
         }
 
         /* Left Card - Input */
         .input-card {
-            max-width: 480px;
+            max-width: none;
         }
 
         .calendar-toggle {
@@ -186,13 +187,17 @@
 
         .date-input-wrapper input {
             width: 100%;
-            padding: 14px 50px 14px 16px;
+            height: 54px;
+            min-height: 54px;
+            padding: 14px 46px 14px 16px;
             font-size: 16px;
             border: 2px solid #e5e7eb;
             border-radius: 10px;
             font-family: inherit;
             color: #6b7280;
             transition: border-color 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .date-input-wrapper input:focus {
@@ -206,10 +211,20 @@
 
         .calendar-icon {
             position: absolute;
-            right: 12px;
+            left: -4px;
             pointer-events: none;
             color: #9ca3af;
             font-size: 18px;
+        }
+
+        /* Keep native date indicator overlayed without shifting width */
+        .date-input-wrapper input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 14px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            opacity: 1;
         }
 
         /* Button */
@@ -237,7 +252,7 @@
 
         /* Right Card - Results */
         .results-card {
-            max-width: 550px;
+            max-width: none;
         }
 
         .result-group {
@@ -648,10 +663,12 @@
 
         function formatDateDisplay(date) {
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const day = date.getDate();
             const month = months[date.getMonth()];
             const year = date.getFullYear();
-            return `${day}-${month}-${year}`;
+            const weekday = weekdays[date.getDay()];
+            return `${day}-${month}-${year}, ${weekday}`;
         }
 
         function calculateDifference() {
@@ -735,7 +752,7 @@
                     const hDate = new Date(h.date);
                     const weekday = isWeekday(hDate);
                     if (weekday) hasWeekdayHoliday = true;
-                    const asterisk = weekday ? '*' : '';
+                    const asterisk = weekday ? ' *' : '';
                     html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}${asterisk}</span> / ${h.name}</div>`;
                 });
                 html += '</div>';
@@ -754,7 +771,7 @@
                     const hDate = new Date(h.date);
                     const weekday = isWeekday(hDate);
                     if (weekday) hasWeekdayHoliday = true;
-                    const asterisk = weekday ? '*' : '';
+                    const asterisk = weekday ? ' *' : '';
                     html += `<div class="holiday-item">• <span class="holiday-date">${formatDateDisplay(hDate)}${asterisk}</span> / ${h.name}</div>`;
                 });
                 html += '</div>';
