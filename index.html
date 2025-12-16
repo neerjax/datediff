@@ -643,15 +643,31 @@
             ]
         };
 
+        // Get min and max dates for validation
+        function getMinMaxDates() {
+            const today = new Date();
+            const minDate = formatDateForInput(today);
+            const maxDate = '2026-12-31'; // Last year with holiday data
+            return { minDate, maxDate };
+        }
+
         // Toggle calendar functionality
         document.getElementById('calendarToggle').addEventListener('change', function() {
             const startDate = document.getElementById('startDate');
             const endDate = document.getElementById('endDate');
+            const { minDate, maxDate } = getMinMaxDates();
 
             if (this.checked) {
                 // Switch to date picker
                 startDate.type = 'date';
                 endDate.type = 'date';
+
+                // Set min/max restrictions
+                startDate.min = minDate;
+                startDate.max = maxDate;
+                endDate.min = minDate;
+                endDate.max = maxDate;
+
                 document.querySelectorAll('.calendar-icon').forEach(icon => {
                     icon.style.display = 'none';
                 });
@@ -754,6 +770,26 @@
 
             if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
                 alert('Invalid date format. Use dd-mmm-yyy');
+                return;
+            }
+
+            // Validate date range
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const maxDate = new Date('2026-12-31');
+
+            if (startDate < today) {
+                alert('Start date cannot be in the past');
+                return;
+            }
+
+            if (endDate < today) {
+                alert('End date cannot be in the past');
+                return;
+            }
+
+            if (startDate > maxDate || endDate > maxDate) {
+                alert('Dates must be before December 31, 2026 (holiday data only available through 2026)');
                 return;
             }
 
@@ -875,12 +911,21 @@
             });
 
             // Set input type to date
-            document.getElementById('startDate').type = 'date';
-            document.getElementById('endDate').type = 'date';
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            startDateInput.type = 'date';
+            endDateInput.type = 'date';
+
+            // Set min/max restrictions
+            const { minDate, maxDate } = getMinMaxDates();
+            startDateInput.min = minDate;
+            startDateInput.max = maxDate;
+            endDateInput.min = minDate;
+            endDateInput.max = maxDate;
 
             // Prefill start date with today
             const today = new Date();
-            document.getElementById('startDate').value = formatDateForInput(today);
+            startDateInput.value = formatDateForInput(today);
 
             // Set initial display to zeros and empty holidays
             document.getElementById('totalDays').textContent = '0';
