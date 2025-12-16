@@ -21,13 +21,29 @@
             padding: 20px;
         }
 
-        .container {
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        .card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
-            max-width: 500px;
-            width: 100%;
+        }
+
+        .input-card {
+            flex: 1;
+            min-width: 350px;
+        }
+
+        .results-card {
+            flex: 1;
+            min-width: 350px;
         }
 
         h1 {
@@ -35,6 +51,24 @@
             margin-bottom: 30px;
             text-align: center;
             font-size: 28px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .input-card,
+            .results-card {
+                min-width: 100%;
+            }
         }
 
         .input-group {
@@ -94,12 +128,11 @@
             transform: translateY(0);
         }
 
-        .results {
-            margin-top: 30px;
+        .results-card {
             display: none;
         }
 
-        .results.show {
+        .results-card.show {
             display: block;
             animation: fadeIn 0.5s;
         }
@@ -170,26 +203,29 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Date Difference Calculator</h1>
+    <div class="main-container">
+        <div class="card input-card">
+            <h1>Date Difference Calculator</h1>
 
-        <div class="input-group">
-            <label for="startDate">Start Date</label>
-            <input type="text" id="startDate" placeholder="dd-mmm-yyyy" required autofocus>
-            <span class="help-text">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
+            <div class="input-group">
+                <label for="startDate">Start Date</label>
+                <input type="text" id="startDate" placeholder="dd-mmm-yyyy" required autofocus>
+                <span class="help-text">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
+            </div>
+
+            <div class="input-group">
+                <label for="endDate">End Date</label>
+                <input type="text" id="endDate" placeholder="dd-mmm-yyyy" required>
+                <span class="help-text">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
+            </div>
+
+            <button class="button" onclick="calculateDifference()">Calculate Difference</button>
+
+            <div class="error" id="error"></div>
         </div>
 
-        <div class="input-group">
-            <label for="endDate">End Date</label>
-            <input type="text" id="endDate" placeholder="dd-mmm-yyyy" required>
-            <span class="help-text">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
-        </div>
-
-        <button class="button" onclick="calculateDifference()">Calculate Difference</button>
-
-        <div class="error" id="error"></div>
-
-        <div class="results" id="results">
+        <div class="card results-card" id="results">
+            <h2>Results</h2>
             <div class="result-row total">
                 <span class="result-label">Total Days</span>
                 <span class="result-value" id="totalDays">0</span>
