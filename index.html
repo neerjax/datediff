@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Date Difference Calculator</title>
+    <title>DateDiff - Your friendly date for all your date-diff needs</title>
     <style>
         * {
             margin: 0;
@@ -13,208 +13,90 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f5f5;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
+        }
+
+        .header {
+            position: absolute;
+            top: 30px;
+            left: 40px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-brand {
+            color: #333;
+        }
+
+        .header-app {
+            color: #10b981;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 80px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .main-title {
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .title-date {
+            color: #1f2937;
+        }
+
+        .title-diff {
+            color: #10b981;
+        }
+
+        .tagline {
+            font-size: 18px;
+            color: #6b7280;
         }
 
         .main-container {
             display: flex;
-            gap: 20px;
-            max-width: 1000px;
-            width: 100%;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
             align-items: flex-start;
         }
 
         .card {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            border: 2px solid #d1fae5;
             padding: 40px;
+            flex: 1;
         }
 
         .input-card {
-            flex: 1;
-            min-width: 350px;
+            position: relative;
         }
 
-        .results-card {
-            flex: 1;
-            min-width: 350px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 28px;
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 22px;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                flex-direction: column;
-            }
-
-            .input-card,
-            .results-card {
-                min-width: 100%;
-            }
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            color: #555;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .help-text {
-            display: block;
-            color: #888;
-            font-size: 12px;
-            margin-top: 5px;
-            font-weight: 400;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .button:active {
-            transform: translateY(0);
-        }
-
-        .results-card {
-            display: block;
-        }
-
-        .results-card.show {
-            animation: fadeIn 0.5s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .result-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            background: #f8f9fa;
-            transition: transform 0.2s;
-        }
-
-        .result-row:hover {
-            transform: translateX(5px);
-        }
-
-        .result-row.total {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            font-size: 18px;
-        }
-
-        .result-row.weekdays {
-            background: #e3f2fd;
-            color: #1976d2;
-        }
-
-        .result-row.weekend {
-            background: #fce4ec;
-            color: #c2185b;
-        }
-
-        .result-label {
-            font-weight: 600;
-        }
-
-        .result-value {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .error {
-            color: #d32f2f;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 14px;
-            display: none;
-        }
-
-        .error.show {
-            display: block;
-        }
-
-        .toggle-container {
+        .calendar-toggle-container {
+            position: absolute;
+            top: 30px;
+            right: 30px;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            margin-bottom: 25px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            gap: 10px;
         }
 
-        .toggle-label {
-            font-weight: 600;
-            color: #555;
-            margin-right: 12px;
+        .calendar-label {
             font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
         }
 
         .toggle-switch {
@@ -237,127 +119,343 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
-            transition: 0.4s;
+            background-color: #10b981;
+            transition: 0.3s;
             border-radius: 26px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
-            left: 4px;
-            bottom: 4px;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
             background-color: white;
-            transition: 0.4s;
+            transition: 0.3s;
             border-radius: 50%;
         }
 
         input:checked + .slider {
-            background-color: #667eea;
+            background-color: #10b981;
         }
 
         input:checked + .slider:before {
             transform: translateX(24px);
         }
 
+        input:not(:checked) + .slider {
+            background-color: #d1d5db;
+        }
+
+        .input-group {
+            margin-bottom: 30px;
+            margin-top: 60px;
+        }
+
+        .input-group:first-of-type {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            color: #1f2937;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .date-input-wrapper {
+            position: relative;
+        }
+
+        input[type="text"],
         input[type="date"] {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
 
+        input[type="text"]:focus,
         input[type="date"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #10b981;
         }
 
-        .result-row.sprints {
-            background: #fff3e0;
-            color: #e65100;
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .calculate-btn:hover {
+            background: #059669;
+        }
+
+        .calculate-btn:active {
+            transform: scale(0.98);
+        }
+
+        .results-card {
+            position: relative;
+        }
+
+        .result-item {
+            margin-bottom: 30px;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 16px;
+            color: #6b7280;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .result-value.weekdays {
+            color: #10b981;
+        }
+
+        .holidays-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .holidays-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .holidays-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .country-holidays {
+            margin-bottom: 25px;
+        }
+
+        .country-holidays:last-child {
+            margin-bottom: 0;
+        }
+
+        .country-flag {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .holiday-item {
+            font-size: 13px;
+            color: #4b5563;
+            margin-bottom: 4px;
+            line-height: 1.6;
+        }
+
+        .holiday-date {
+            font-weight: 500;
+        }
+
+        .error {
+            color: #dc2626;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .main-title {
+                font-size: 56px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                position: static;
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .container {
+                padding-top: 20px;
+            }
+
+            .main-title {
+                font-size: 48px;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+
+            .calendar-toggle-container {
+                position: static;
+                justify-content: flex-end;
+                margin-bottom: 20px;
+            }
+
+            .input-group {
+                margin-top: 25px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="card input-card">
-            <h1>Date Difference Calculator</h1>
+    <div class="header">
+        <span class="header-brand">NEERJAX</span> / <span class="header-app">DATEDIFF</span>
+    </div>
 
-            <div class="toggle-container">
-                <span class="toggle-label">Use Calendar</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="calendarToggle" onchange="toggleCalendar()" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
-
-            <div class="input-group">
-                <label for="startDate">Start Date</label>
-                <input type="text" id="startDate" placeholder="dd-mmm-yyyy" required autofocus>
-                <span class="help-text" id="startHelp">Format: dd-mmm-yyyy (e.g., 07-Dec-2025)</span>
-            </div>
-
-            <div class="input-group">
-                <label for="endDate">End Date</label>
-                <input type="text" id="endDate" placeholder="dd-mmm-yyyy" required>
-                <span class="help-text" id="endHelp">Format: dd-mmm-yyyy (e.g., 31-Dec-2025)</span>
-            </div>
-
-            <button class="button" onclick="calculateDifference()">Calculate Difference</button>
-
-            <div class="error" id="error"></div>
+    <div class="container">
+        <div class="title-section">
+            <h1 class="main-title">
+                <span class="title-date">Date</span><span class="title-diff">Diff</span>
+            </h1>
+            <p class="tagline">Your friendly date for all your date-diff needs</p>
         </div>
 
-        <div class="card results-card" id="results">
-            <h2>Results</h2>
-            <div class="result-row total">
-                <span class="result-label">Total Days</span>
-                <span class="result-value" id="totalDays">0</span>
+        <div class="main-container">
+            <div class="card input-card">
+                <div class="calendar-toggle-container">
+                    <span class="calendar-label">Calendar</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="calendarToggle" onchange="toggleCalendar()" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label for="startDate">Start Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="startDate" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="endDate">End Date</label>
+                    <div class="date-input-wrapper">
+                        <input type="date" id="endDate" required>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateDifference()">Calculate Difference</button>
+
+                <div class="error" id="error"></div>
             </div>
-            <div class="result-row weekdays">
-                <span class="result-label">Weekdays (Mon-Fri)</span>
-                <span class="result-value" id="weekdays">0</span>
-            </div>
-            <div class="result-row weekend">
-                <span class="result-label">Weekend (Sat-Sun)</span>
-                <span class="result-value" id="weekend">0</span>
-            </div>
-            <div class="result-row sprints">
-                <span class="result-label">Possible 2-Week Sprints</span>
-                <span class="result-value" id="sprintCount">0</span>
+
+            <div class="card results-card" id="results">
+                <div class="result-item">
+                    <div class="result-label">Total Days</div>
+                    <div class="result-value" id="totalDays">97</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Weekdays</div>
+                    <div class="result-value weekdays" id="weekdays">92</div>
+                </div>
+
+                <div class="result-item">
+                    <div class="result-label">Weekends</div>
+                    <div class="result-value" id="weekend">13</div>
+                </div>
+
+                <div class="holidays-section">
+                    <div class="holidays-title">Holidays</div>
+                    <div class="holidays-box" id="holidaysBox">
+                        <div class="country-holidays">
+                            <div class="country-flag">🇮🇳</div>
+                            <div class="holiday-item">• <span class="holiday-date">10-Jul-2025</span> / Diwali</div>
+                            <div class="holiday-item">• <span class="holiday-date">12-Jul-2025</span> / Dussehra</div>
+                        </div>
+                        <div class="country-holidays">
+                            <div class="country-flag">🇺🇸</div>
+                            <div class="holiday-item">• <span class="holiday-date">4-Jul-2025</span> / 4th of July</div>
+                            <div class="holiday-item">• <span class="holiday-date">12-Jul-2025</span> / Halloween</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Holiday data for different countries
+        const holidays = {
+            india: [
+                { date: '2025-01-26', name: 'Republic Day' },
+                { date: '2025-03-14', name: 'Holi' },
+                { date: '2025-08-15', name: 'Independence Day' },
+                { date: '2025-10-02', name: 'Gandhi Jayanti' },
+                { date: '2025-10-20', name: 'Dussehra' },
+                { date: '2025-11-08', name: 'Diwali' }
+            ],
+            usa: [
+                { date: '2025-01-01', name: 'New Year\'s Day' },
+                { date: '2025-07-04', name: '4th of July' },
+                { date: '2025-10-31', name: 'Halloween' },
+                { date: '2025-11-27', name: 'Thanksgiving' },
+                { date: '2025-12-25', name: 'Christmas' }
+            ]
+        };
+
         function toggleCalendar() {
             const toggle = document.getElementById('calendarToggle');
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
-            const startHelp = document.getElementById('startHelp');
-            const endHelp = document.getElementById('endHelp');
 
             if (toggle.checked) {
                 // Switch to calendar mode
                 const startValue = startDateInput.value;
                 const endValue = endDateInput.value;
 
-                // Store current values before changing type
                 let startDateValue = '';
                 let endDateValue = '';
 
-                // Only try to parse if we have values and we're in text mode
                 if (startValue && startDateInput.type === 'text') {
                     const startDate = parseDate(startValue);
                     if (startDate && !isNaN(startDate.getTime())) {
                         startDateValue = formatDateForInput(startDate);
                     }
                 } else if (startValue && startDateInput.type === 'date') {
-                    // Already in date format
                     startDateValue = startValue;
                 }
 
@@ -367,37 +465,29 @@
                         endDateValue = formatDateForInput(endDate);
                     }
                 } else if (endValue && endDateInput.type === 'date') {
-                    // Already in date format
                     endDateValue = endValue;
                 }
 
-                // Change type and set values
                 startDateInput.type = 'date';
                 endDateInput.type = 'date';
-                // Small delay to ensure type change is processed
                 setTimeout(() => {
                     startDateInput.value = startDateValue;
                     endDateInput.value = endDateValue;
                 }, 0);
-                startHelp.textContent = 'Select a date from the calendar';
-                endHelp.textContent = 'Select a date from the calendar';
             } else {
                 // Switch to text mode
                 const startValue = startDateInput.value;
                 const endValue = endDateInput.value;
 
-                // Store current values before changing type
                 let startTextValue = '';
                 let endTextValue = '';
 
-                // Only try to parse if we have values and we're in date mode
                 if (startValue && startDateInput.type === 'date') {
                     const startDate = new Date(startValue + 'T00:00:00');
                     if (!isNaN(startDate.getTime())) {
                         startTextValue = formatDateToText(startDate);
                     }
                 } else if (startValue && startDateInput.type === 'text') {
-                    // Already in text format
                     startTextValue = startValue;
                 }
 
@@ -407,22 +497,17 @@
                         endTextValue = formatDateToText(endDate);
                     }
                 } else if (endValue && endDateInput.type === 'text') {
-                    // Already in text format
                     endTextValue = endValue;
                 }
 
-                // Change type and set values
                 startDateInput.type = 'text';
                 endDateInput.type = 'text';
-                startDateInput.placeholder = 'dd-mmm-yyyy';
-                endDateInput.placeholder = 'dd-mmm-yyyy';
-                // Small delay to ensure type change is processed
+                startDateInput.placeholder = 'dd-mmm-yyy';
+                endDateInput.placeholder = 'dd-mmm-yyy';
                 setTimeout(() => {
                     startDateInput.value = startTextValue;
                     endDateInput.value = endTextValue;
                 }, 0);
-                startHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 07-Dec-2025)';
-                endHelp.textContent = 'Format: dd-mmm-yyyy (e.g., 31-Dec-2025)';
             }
         }
 
@@ -442,37 +527,23 @@
             return `${day}-${month}-${year}`;
         }
 
-        function isValidDate(day, month, year) {
-            // Check year range (1900-2100)
-            if (year < 1900 || year > 2100) {
-                return false;
-            }
-
-            // Check month range (0-11)
-            if (month < 0 || month > 11) {
-                return false;
-            }
-
-            // Check day range based on month
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            if (day < 1 || day > daysInMonth) {
-                return false;
-            }
-
-            return true;
+        function formatDateForDisplay(date) {
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const day = date.getDate();
+            const month = monthNames[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
         }
 
         function parseDate(dateStr) {
-            // Remove extra spaces
             dateStr = dateStr.trim();
 
-            // Month abbreviations
             const months = {
                 'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5,
                 'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11
             };
 
-            // Try parsing dd-mmm-yyyy format (e.g., 07-Dec-2025)
             const ddMmmYyyyMatch = dateStr.match(/^(\d{1,2})-([a-zA-Z]{3})-(\d{4})$/);
             if (ddMmmYyyyMatch) {
                 const day = parseInt(ddMmmYyyyMatch[1]);
@@ -481,54 +552,6 @@
 
                 if (months.hasOwnProperty(monthStr)) {
                     const month = months[monthStr];
-                    if (isValidDate(day, month, year)) {
-                        const date = new Date(year, month, day);
-                        // Double-check that the date wasn't adjusted by JavaScript
-                        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
-                            return date;
-                        }
-                    }
-                }
-            }
-
-            // Try parsing YYYY-MM-DD format
-            const isoMatch = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
-            if (isoMatch) {
-                const year = parseInt(isoMatch[1]);
-                const month = parseInt(isoMatch[2]) - 1;
-                const day = parseInt(isoMatch[3]);
-
-                if (isValidDate(day, month, year)) {
-                    const date = new Date(year, month, day);
-                    if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
-                        return date;
-                    }
-                }
-            }
-
-            // Try parsing MM/DD/YYYY or M/D/YYYY format
-            const usMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-            if (usMatch) {
-                const month = parseInt(usMatch[1]) - 1;
-                const day = parseInt(usMatch[2]);
-                const year = parseInt(usMatch[3]);
-
-                if (isValidDate(day, month, year)) {
-                    const date = new Date(year, month, day);
-                    if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
-                        return date;
-                    }
-                }
-            }
-
-            // Try parsing DD/MM/YYYY or D/M/YYYY format
-            const ukMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-            if (ukMatch && parseInt(ukMatch[1]) > 12) {
-                const day = parseInt(ukMatch[1]);
-                const month = parseInt(ukMatch[2]) - 1;
-                const year = parseInt(ukMatch[3]);
-
-                if (isValidDate(day, month, year)) {
                     const date = new Date(year, month, day);
                     if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) {
                         return date;
@@ -539,57 +562,106 @@
             return null;
         }
 
+        function getHolidaysInRange(startDate, endDate) {
+            const holidaysInRange = {
+                india: [],
+                usa: []
+            };
+
+            // Check India holidays
+            holidays.india.forEach(holiday => {
+                const holidayDate = new Date(holiday.date + 'T00:00:00');
+                if (holidayDate >= startDate && holidayDate <= endDate) {
+                    holidaysInRange.india.push({
+                        date: formatDateForDisplay(holidayDate),
+                        name: holiday.name
+                    });
+                }
+            });
+
+            // Check USA holidays
+            holidays.usa.forEach(holiday => {
+                const holidayDate = new Date(holiday.date + 'T00:00:00');
+                if (holidayDate >= startDate && holidayDate <= endDate) {
+                    holidaysInRange.usa.push({
+                        date: formatDateForDisplay(holidayDate),
+                        name: holiday.name
+                    });
+                }
+            });
+
+            return holidaysInRange;
+        }
+
+        function displayHolidays(holidaysInRange) {
+            const holidaysBox = document.getElementById('holidaysBox');
+            let html = '';
+
+            if (holidaysInRange.india.length > 0) {
+                html += '<div class="country-holidays">';
+                html += '<div class="country-flag">🇮🇳</div>';
+                holidaysInRange.india.forEach(holiday => {
+                    html += `<div class="holiday-item">• <span class="holiday-date">${holiday.date}</span> / ${holiday.name}</div>`;
+                });
+                html += '</div>';
+            }
+
+            if (holidaysInRange.usa.length > 0) {
+                html += '<div class="country-holidays">';
+                html += '<div class="country-flag">🇺🇸</div>';
+                holidaysInRange.usa.forEach(holiday => {
+                    html += `<div class="holiday-item">• <span class="holiday-date">${holiday.date}</span> / ${holiday.name}</div>`;
+                });
+                html += '</div>';
+            }
+
+            if (html === '') {
+                html = '<div style="color: #9ca3af; text-align: center; padding: 20px;">No holidays found in this date range</div>';
+            }
+
+            holidaysBox.innerHTML = html;
+        }
+
         function calculateDifference() {
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
             const errorDiv = document.getElementById('error');
-            const resultsDiv = document.getElementById('results');
             const isCalendarMode = document.getElementById('calendarToggle').checked;
 
-            // Reset error
             errorDiv.classList.remove('show');
             errorDiv.textContent = '';
 
-            // Validate inputs
             if (!startDateInput.value || !endDateInput.value) {
                 errorDiv.textContent = 'Please enter both dates';
                 errorDiv.classList.add('show');
-                resultsDiv.classList.remove('show');
                 return;
             }
 
             let startDate, endDate;
 
             if (isCalendarMode) {
-                // Calendar mode - parse YYYY-MM-DD format
-                startDate = new Date(startDateInput.value);
-                endDate = new Date(endDateInput.value);
+                startDate = new Date(startDateInput.value + 'T00:00:00');
+                endDate = new Date(endDateInput.value + 'T00:00:00');
             } else {
-                // Text mode - parse custom format
                 startDate = parseDate(startDateInput.value);
                 endDate = parseDate(endDateInput.value);
             }
 
-            // Validate date parsing
             if (!startDate || isNaN(startDate.getTime())) {
-                errorDiv.textContent = isCalendarMode ? 'Invalid start date' : 'Invalid start date. Use format dd-mmm-yyyy (e.g., 07-Dec-2025)';
+                errorDiv.textContent = isCalendarMode ? 'Invalid start date' : 'Invalid start date. Use format dd-mmm-yyy';
                 errorDiv.classList.add('show');
-                resultsDiv.classList.remove('show');
                 return;
             }
 
             if (!endDate || isNaN(endDate.getTime())) {
-                errorDiv.textContent = isCalendarMode ? 'Invalid end date' : 'Invalid end date. Use format dd-mmm-yyyy (e.g., 31-Dec-2025)';
+                errorDiv.textContent = isCalendarMode ? 'Invalid end date' : 'Invalid end date. Use format dd-mmm-yyy';
                 errorDiv.classList.add('show');
-                resultsDiv.classList.remove('show');
                 return;
             }
 
-            // Validate date order
             if (endDate < startDate) {
                 errorDiv.textContent = 'End date must be after start date';
                 errorDiv.classList.add('show');
-                resultsDiv.classList.remove('show');
                 return;
             }
 
@@ -598,57 +670,42 @@
             let weekdays = 0;
             let weekend = 0;
 
-            // Iterate through each day
             const currentDate = new Date(startDate);
             while (currentDate <= endDate) {
                 totalDays++;
                 const dayOfWeek = currentDate.getDay();
 
-                // 0 = Sunday, 6 = Saturday
                 if (dayOfWeek === 0 || dayOfWeek === 6) {
                     weekend++;
                 } else {
                     weekdays++;
                 }
 
-                // Move to next day
                 currentDate.setDate(currentDate.getDate() + 1);
             }
-
-            // Calculate sprints (2 weeks = 14 days)
-            const sprintCount = calculateSprintCount(totalDays);
 
             // Display results
             document.getElementById('totalDays').textContent = totalDays;
             document.getElementById('weekdays').textContent = weekdays;
             document.getElementById('weekend').textContent = weekend;
-            document.getElementById('sprintCount').textContent = sprintCount;
-            resultsDiv.classList.add('show');
+
+            // Get and display holidays
+            const holidaysInRange = getHolidaysInRange(startDate, endDate);
+            displayHolidays(holidaysInRange);
         }
 
-        function calculateSprintCount(totalDays) {
-            const sprintDuration = 14; // 2 weeks in days
-            const count = totalDays / sprintDuration;
-
-            // Return with one decimal place if it's not a whole number
-            if (count % 1 !== 0) {
-                return count.toFixed(1);
-            }
-            return count;
-        }
-
-        // Set today's date as default for start date
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Set default dates for the example
             const today = new Date();
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const day = String(today.getDate()).padStart(2, '0');
-            const month = monthNames[today.getMonth()];
-            const year = today.getFullYear();
-            document.getElementById('startDate').value = `${day}-${month}-${year}`;
+            document.getElementById('startDate').value = formatDateForInput(today);
 
-            // Initialize calendar mode since toggle is checked by default
-            toggleCalendar();
+            const futureDate = new Date(today);
+            futureDate.setDate(today.getDate() + 96); // 97 days total (including start date)
+            document.getElementById('endDate').value = formatDateForInput(futureDate);
+
+            // Calculate initial results
+            calculateDifference();
         });
 
         // Allow Enter key to trigger calculation
