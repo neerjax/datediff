@@ -96,17 +96,20 @@
 
         /* Left Card - Input */
         .input-card {
-            max-width: 420px;
+            /* Same size as results card */
+        }
+
+        .results-card {
+            /* Same size as input card */
         }
 
         .calendar-toggle {
             position: absolute;
-            top: 30px;
+            top: 40px;
             right: 40px;
             display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
+            align-items: center;
+            gap: 12px;
             z-index: 10;
         }
 
@@ -172,7 +175,7 @@
         }
 
         .form-group:first-of-type {
-            margin-top: 50px;
+            margin-top: 0;
         }
 
         .form-group label {
