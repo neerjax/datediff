@@ -324,12 +324,21 @@
         @media (max-width: 1100px) {
             .cards-container {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
+                gap: 25px;
             }
 
             .card {
-                max-width: 600px;
+                max-width: 100%;
                 width: 100%;
+            }
+
+            .input-card {
+                max-width: 100%;
+            }
+
+            .results-card {
+                max-width: 100%;
             }
 
             .main-title {
@@ -338,32 +347,92 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 20px 15px;
+            }
+
             .header {
                 position: static;
                 text-align: center;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
+                font-size: 14px;
             }
 
             .container {
-                padding-top: 20px;
+                padding-top: 10px;
             }
 
             .main-title {
-                font-size: 48px;
+                font-size: 42px;
             }
 
             .title-section {
-                margin-bottom: 50px;
+                margin-bottom: 35px;
+            }
+
+            .tagline {
+                font-size: 16px;
             }
 
             .card {
-                padding: 30px 25px;
+                padding: 25px 20px;
+                border-radius: 16px;
             }
 
             .calendar-toggle {
                 position: static;
+                flex-direction: row;
                 justify-content: flex-end;
+                align-items: center;
+                margin-bottom: 25px;
+                gap: 10px;
+            }
+
+            .cards-container {
+                gap: 20px;
+            }
+
+            .result-group {
                 margin-bottom: 30px;
+            }
+
+            .result-value {
+                font-size: 48px;
+            }
+
+            .holidays-box {
+                padding: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .header {
+                font-size: 12px;
+            }
+
+            .main-title {
+                font-size: 36px;
+            }
+
+            .tagline {
+                font-size: 14px;
+            }
+
+            .card {
+                padding: 20px 15px;
+            }
+
+            .result-value {
+                font-size: 40px;
+            }
+
+            .holidays-section {
+                margin-top: 30px;
+                padding-top: 25px;
             }
         }
     </style>
